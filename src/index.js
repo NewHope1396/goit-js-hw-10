@@ -17,7 +17,7 @@ function onInput(evt) {
         return
     }
 
-    fetchCountries(evt.target.value).then((data) => {
+    fetchCountries(evt.target.value.trim()).then((data) => {
         markupList(data);
     }).catch((e) => { 
         console.log('404')
