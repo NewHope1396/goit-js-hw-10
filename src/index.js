@@ -1,5 +1,6 @@
 import './css/styles.css';
-import {fetchCountries} from './js/fetchCountries';
+import { fetchCountries } from './js/fetchCountries';
+const debounce = require('lodash.debounce');
 
 const DEBOUNCE_DELAY = 300;
 
@@ -7,16 +8,16 @@ const input = document.querySelector('#search-box');
 const list = document.querySelector('.country-list');
 const countryInfo = document.querySelector('.country-info');
 
-input.addEventListener('input', onInput);
+input.addEventListener('input', debounce(onInput, DEBOUNCE_DELAY));
 
 function onInput(evt) {
-    if (!evt.currentTarget.value) {
+    if (!evt.target.value) {
         list.innerHTML = '';
         countryInfo.innerHTML = '';
         return
     }
 
-    fetchCountries(evt.currentTarget.value).then((data) => {
+    fetchCountries(evt.target.value).then((data) => {
         markupList(data);
     }).catch((e) => { 
         console.log('404')
