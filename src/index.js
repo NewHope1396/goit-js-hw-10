@@ -1,6 +1,7 @@
 import './css/styles.css';
 import { fetchCountries } from './js/fetchCountries';
 const debounce = require('lodash.debounce');
+import Notiflix from 'notiflix';
 
 const DEBOUNCE_DELAY = 300;
 
@@ -18,21 +19,24 @@ function onInput(evt) {
     }
 
     fetchCountries(evt.target.value.trim()).then((data) => {
+        if (data === 404) {
+            return Notiflix.Notify.failure('Oops, there is no country with that name');
+        }
         markupList(data);
     }).catch((e) => { 
-        console.log('404')
+        console.log(e)
     });
 }
 
 function markupList(data) {
     if (data.length > 10) {
-        return console.log("Пиши еще")
+        return Notiflix.Notify.info('Too many matches found. Please enter a more specific name.');
     }
 
     if (data.length === 1) {
         const markup = data.map((country) =>  `
         <h1>
-        <img class = "main-svg" src = "${country.flags.svg}"/>${country.name.common}
+        <img class = "main-svg" src = "${country.flags.svg}"/>${country.name.official}
         </h1>
         <ul class = "main-list">
         <li>Capital: ${country.capital}</li>
@@ -46,7 +50,7 @@ function markupList(data) {
         return;
     }
 
-    const markup = data.map((country) => `<li class = "country"><img class = "svg" src = "${country.flags.svg}"/> ${country.name.common}</li>`).join('');
+    const markup = data.map((country) => `<li class = "country"><img class = "svg" src = "${country.flags.svg}"/> ${country.name.official}</li>`).join('');
     list.innerHTML = markup;
     countryInfo.innerHTML = '';
 }
